@@ -1,0 +1,56 @@
+<div
+  class="annotation-chrome"
+  (mousedown)="$event.stopPropagation()"
+  (click)="$event.stopPropagation()"
+>
+  <div class="annotation-controls">
+    <label class="font-field">
+      <span class="font-field-label">Размер</span>
+      <input
+        class="font-size-input"
+        type="number"
+        min="8"
+        max="96"
+        step="1"
+        [value]="chromeStyle().fontSizePx"
+        (input)="fontSizeInput.emit($event)"
+      />
+    </label>
+    <button
+      type="button"
+      class="chrome-btn"
+      [class.active]="chromeStyle().fontStyle === 'italic'"
+      (click)="toggleItalic.emit()"
+      title="Курсив"
+    >
+      <span class="italic-i">I</span>
+    </button>
+    <button
+      type="button"
+      class="chrome-btn"
+      [class.active]="chromeStyle().fontWeight === 'bold'"
+      (click)="toggleBold.emit()"
+      title="Жирный"
+    >
+      <span class="bold-b">B</span>
+    </button>
+    <button
+      type="button"
+      class="chrome-btn"
+      [class.active]="chromeStyle().textDecoration === 'underline'"
+      (click)="toggleUnderline.emit()"
+      title="Подчёркнутый"
+    >
+      <span class="underline-u">U</span>
+    </button>
+  </div>
+  <button
+    type="button"
+    class="chrome-close"
+    [attr.aria-label]="closeAriaLabel()"
+    [title]="closeTitle()"
+    (click)="onCloseClick($event)"
+  >
+    ×
+  </button>
+</div>

@@ -1,0 +1,29 @@
+:host {
+  display: block;
+  height: 100vh;
+  max-height: 100vh;
+  min-height: 0;
+}
+
+.document-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+  overflow: hidden;
+
+  app-document-annotations {
+    flex: 1;
+    min-height: 0;
+  }
+}
+
+.status {
+  margin: 2rem;
+  text-align: center;
+
+  &.error {
+    color: #c62828;
+  }
+}

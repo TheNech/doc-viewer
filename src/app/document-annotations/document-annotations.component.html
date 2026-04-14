@@ -1,0 +1,169 @@
+@if (showPlacementHint()) {
+  <p class="hint">
+    Зажмите кнопку мыши на странице и выделите область. Затем введите текст и кликните по свободному месту страницы для сохранения.
+  </p>
+}
+@if (showPendingHint()) {
+  <p class="hint hint-pending">Кликните по странице вне рамки, чтобы сохранить аннотацию. Esc — отмена.</p>
+}
+
+<div class="document-workspace">
+  <aside class="page-thumbnails" aria-label="Быстрый переход по страницам">
+    @for (page of document().pages; track page.number) {
+      <button
+        type="button"
+        class="page-thumb"
+        [class.active]="activePageNumber() === page.number"
+        [attr.aria-current]="activePageNumber() === page.number ? 'page' : null"
+        [title]="'Страница ' + page.number"
+        (click)="scrollToPage(page.number)"
+      >
+        <span class="page-thumb-img-wrap">
+          <img [src]="page.imageUrl" alt="" draggable="false" />
+        </span>
+        <span class="page-thumb-label">{{ page.number }}</span>
+      </button>
+    }
+  </aside>
+
+  <div
+    #viewport
+    class="viewport"
+    [class.placement-mode]="placementMode() || isDrawing()"
+    (scroll)="onViewportScroll()"
+  >
+  <div class="pages-scaler" [style.width.%]="100 * zoom()">
+    <div class="pages">
+      @for (page of document().pages; track page.number) {
+        <figure
+          class="page"
+          [attr.data-doc-page]="page.number"
+          (mousedown)="figureMouseDown.emit({ event: $event, pageNumber: page.number })"
+          (click)="figureClick.emit({ event: $event, pageNumber: page.number })"
+        >
+          <img
+            [src]="page.imageUrl"
+            [alt]="'Страница ' + page.number"
+            (load)="$first && firstPageLoaded.emit($event)"
+            draggable="false"
+          />
+
+          @if (drawPreviewState(); as dps) {
+            @if (dps.pageNumber === page.number) {
+              <div
+                class="draw-preview"
+                [style.left.%]="dps.box.left * 100"
+                [style.top.%]="dps.box.top * 100"
+                [style.width.%]="dps.box.w * 100"
+                [style.height.%]="dps.box.h * 100"
+              ></div>
+            }
+          }
+
+          @if (pending(); as p) {
+            @if (p.pageNumber === page.number) {
+              <div
+                class="annotation-box annotation-pending"
+                [style.left.%]="p.x * 100"
+                [style.top.%]="p.y * 100"
+                [style.width.%]="p.w * 100"
+                [style.height.%]="p.h * 100"
+                (mousedown)="$event.stopPropagation()"
+                (click)="$event.stopPropagation()"
+              >
+                <div class="annotation-resize-handles" aria-hidden="true">
+                  @for (h of resizeHandles; track h) {
+                    <div
+                      class="annotation-resize-handle"
+                      [attr.data-handle]="h"
+                      (mousedown)="resizeHandleMouseDown.emit({ event: $event, ann: p, handle: h })"
+                    ></div>
+                  }
+                </div>
+                <div class="annotation-drag" title="Переместить">
+                  <span
+                    class="annotation-drag-grip"
+                    aria-hidden="true"
+                    (mousedown)="startDrag.emit({ event: $event, ann: p })"
+                  ></span>
+                </div>
+                <app-annotation-style-controls
+                  [chromeStyle]="chromeStyle()"
+                  closeAriaLabel="Отменить добавление"
+                  closeTitle="Отменить"
+                  (fontSizeInput)="fontSizeInput.emit($event)"
+                  (toggleItalic)="toggleItalic.emit()"
+                  (toggleBold)="toggleBold.emit()"
+                  (toggleUnderline)="toggleUnderline.emit()"
+                  (closeClick)="discardPending.emit()"
+                />
+                <textarea
+                  class="annotation-text"
+                  placeholder="Текст"
+                  [value]="p.text"
+                  (input)="annotationTextInput.emit({ ann: p, event: $event })"
+                  [style.fontSize.px]="p.style.fontSizePx"
+                  [style.fontStyle]="p.style.fontStyle"
+                  [style.fontWeight]="p.style.fontWeight"
+                  [style.textDecoration]="p.style.textDecoration"
+                ></textarea>
+              </div>
+            }
+          }
+
+          @for (ann of annotationsOnPage(page.number); track ann.id) {
+            <div
+              class="annotation-box"
+              [class.selected]="selectedAnnotationId() === ann.id"
+              [style.left.%]="ann.x * 100"
+              [style.top.%]="ann.y * 100"
+              [style.width.%]="ann.w * 100"
+              [style.height.%]="ann.h * 100"
+              (mousedown)="savedAnnotationMouseDown.emit({ event: $event, ann: ann })"
+            >
+              @if (selectedAnnotationId() === ann.id) {
+                <div class="annotation-resize-handles" aria-hidden="true">
+                  @for (h of resizeHandles; track h) {
+                    <div
+                      class="annotation-resize-handle"
+                      [attr.data-handle]="h"
+                      (mousedown)="resizeHandleMouseDown.emit({ event: $event, ann: ann, handle: h })"
+                    ></div>
+                  }
+                </div>
+                <div class="annotation-drag" title="Переместить">
+                  <span
+                    class="annotation-drag-grip"
+                    aria-hidden="true"
+                    (mousedown)="startDrag.emit({ event: $event, ann: ann })"
+                  ></span>
+                </div>
+                <app-annotation-style-controls
+                  [chromeStyle]="chromeStyle()"
+                  closeAriaLabel="Удалить аннотацию"
+                  closeTitle="Удалить"
+                  (fontSizeInput)="fontSizeInput.emit($event)"
+                  (toggleItalic)="toggleItalic.emit()"
+                  (toggleBold)="toggleBold.emit()"
+                  (toggleUnderline)="toggleUnderline.emit()"
+                  (closeClick)="deleteAnnotation.emit(ann.id)"
+                />
+              }
+              <textarea
+                class="annotation-text"
+                [value]="ann.text"
+                [readOnly]="selectedAnnotationId() !== ann.id"
+                (input)="annotationTextInput.emit({ ann: ann, event: $event })"
+                [style.fontSize.px]="ann.style.fontSizePx"
+                [style.fontStyle]="ann.style.fontStyle"
+                [style.fontWeight]="ann.style.fontWeight"
+                [style.textDecoration]="ann.style.textDecoration"
+              ></textarea>
+            </div>
+          }
+        </figure>
+      }
+    </div>
+  </div>
+</div>
+</div>

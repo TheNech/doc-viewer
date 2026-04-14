@@ -1,0 +1,92 @@
+.annotation-chrome {
+  position: absolute;
+  left: 0;
+  bottom: 100%;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.35rem;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  white-space: nowrap;
+  z-index: 8;
+}
+
+.annotation-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.chrome-close {
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.15rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #b71c1c;
+  background: rgba(198, 40, 40, 0.08);
+
+  &:hover {
+    background: rgba(198, 40, 40, 0.18);
+  }
+}
+
+.chrome-btn {
+  min-width: 1.75rem;
+  height: 1.75rem;
+  padding: 0 0.35rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.06);
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  &.active {
+    background: rgba(25, 118, 210, 0.2);
+    color: #0d47a1;
+  }
+}
+
+.italic-i {
+  font-style: italic;
+  font-family: Georgia, serif;
+}
+
+.bold-b {
+  font-weight: 700;
+}
+
+.underline-u {
+  text-decoration: underline;
+}
+
+.font-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8125rem;
+}
+
+.font-field-label {
+  opacity: 0.75;
+  white-space: nowrap;
+}
+
+.font-size-input {
+  width: 3.25rem;
+  padding: 0.2rem 0.35rem;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  font-size: 0.8125rem;
+}

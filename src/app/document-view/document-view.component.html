@@ -1,0 +1,59 @@
+<div class="document-view">
+  @if (loading) {
+    <p class="status">Загрузка…</p>
+  } @else if (error) {
+    <p class="status error">{{ error }}</p>
+  } @else if (document) {
+    <app-document-header
+      [documentName]="document.name"
+      [zoom]="interaction.zoom()"
+      [minZoom]="interaction.minZoom"
+      [maxZoom]="interaction.maxZoom"
+      [placementMode]="interaction.placementMode()"
+      [clearAllDisabled]="
+        interaction.annotations().length === 0 && !interaction.pending()
+      "
+      [canUndo]="interaction.canUndo()"
+      (zoomOut)="interaction.zoomOut()"
+      (zoomIn)="interaction.zoomIn()"
+      (togglePlacement)="interaction.togglePlacementMode()"
+      (clearAll)="interaction.clearAllAnnotations()"
+      (undo)="interaction.undo()"
+      (save)="interaction.saveToConsole(documentId, document)"
+    />
+
+    <app-document-annotations
+      [document]="document"
+      [zoom]="interaction.zoom()"
+      [placementMode]="interaction.placementMode()"
+      [isDrawing]="interaction.isDrawing()"
+      [drawPreviewState]="interaction.drawPreviewState()"
+      [pending]="interaction.pending()"
+      [annotations]="interaction.annotations()"
+      [selectedAnnotationId]="interaction.selectedAnnotationId()"
+      [chromeStyle]="interaction.currentStyle()"
+      [showPlacementHint]="interaction.placementMode() && !interaction.isDrawing()"
+      [showPendingHint]="
+        !!interaction.pending() && !interaction.placementMode()
+      "
+      [isDraggingAnnotation]="interaction.isDraggingAnnotation()"
+      (firstPageLoaded)="interaction.onFirstPageLoaded($event)"
+      (figureMouseDown)="interaction.onAnnotationsFigureMouseDown($event)"
+      (figureClick)="interaction.onAnnotationsFigureClick($event)"
+      (discardPending)="interaction.discardPending()"
+      (fontSizeInput)="interaction.onFontSizeInput($event)"
+      (toggleItalic)="interaction.toggleItalic()"
+      (toggleBold)="interaction.toggleBold()"
+      (toggleUnderline)="interaction.toggleUnderline()"
+      (startDrag)="interaction.startDragAnnotation($event.event, $event.ann)"
+      (savedAnnotationMouseDown)="
+        interaction.onSavedAnnotationMouseDown($event.event, $event.ann)
+      "
+      (resizeHandleMouseDown)="interaction.onResizeHandleMouseDown($event)"
+      (annotationTextInput)="
+        interaction.onAnnotationTextInput($event.ann, $event.event)
+      "
+      (deleteAnnotation)="interaction.deleteAnnotation($event)"
+    />
+  }
+</div>

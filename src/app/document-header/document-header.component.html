@@ -1,0 +1,59 @@
+<header class="header">
+  <div class="header-main">
+    <h1 class="title">{{ documentName() }}</h1>
+  </div>
+  <div class="header-tools">
+    <div class="toolbar" role="toolbar" aria-label="Масштаб">
+      <button
+        type="button"
+        class="toolbar-btn"
+        (click)="zoomOut.emit()"
+        [disabled]="zoom() <= minZoom()"
+        aria-label="Уменьшить масштаб"
+      >
+        −
+      </button>
+      <span class="zoom-value" aria-live="polite">{{ zoom() * 100 | number : '1.0-0' }}%</span>
+      <button
+        type="button"
+        class="toolbar-btn"
+        (click)="zoomIn.emit()"
+        [disabled]="zoom() >= maxZoom()"
+        aria-label="Увеличить масштаб"
+      >
+        +
+      </button>
+    </div>
+
+    <div class="toolbar annotation-toolbar" role="toolbar" aria-label="Аннотации">
+      <button
+        type="button"
+        class="toolbar-btn toolbar-btn-text"
+        [class.active]="placementMode()"
+        (click)="togglePlacement.emit()"
+        [attr.aria-pressed]="placementMode()"
+        title="Перетащите на странице, чтобы задать размер"
+      >
+        Аннотация +
+      </button>
+      <button
+        type="button"
+        class="toolbar-btn toolbar-btn-text"
+        (click)="clearAll.emit()"
+        [disabled]="clearAllDisabled()"
+      >
+        Удалить все
+      </button>
+      <button
+        type="button"
+        class="toolbar-btn toolbar-btn-text"
+        (click)="undo.emit()"
+        [disabled]="!canUndo()"
+        title="Ctrl+Z"
+      >
+        Отменить
+      </button>
+      <button type="button" class="toolbar-btn toolbar-btn-text" (click)="save.emit()">Сохранить</button>
+    </div>
+  </div>
+</header>
